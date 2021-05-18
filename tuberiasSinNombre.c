@@ -21,25 +21,34 @@ int main () {
         /*El proceso hijo (receptor) se encarga de leer el mensaje de la tuberia
         y presentarlos en pantalla. El ciclo de lectura y precentacion terminan
         al leer el mensaje "FIN\n".*/
+        // close(tuberia[1]);
+        while (read(tuberia [0], mensaje, MAX) > 0  && 
+		    strcmp(mensaje, "FIN\n") !=0 ) {
+          printf("\nPROCESO RECEPTOR. MENSAJE: %s\n", mensaje);
+        }
+        /*Enviamos al proceso emisor un mensaje para indicar que estamos listos para recibir otro mensaje.*/        
+        close(tuberia [0]);
         close(tuberia[1]);
-        while (read (tuberia [0], mensaje, MAX) > 0  && 
-		strcmp(mensaje, "FIN\n") !=0 ) 
-            printf("PROCESO RECEPTOR. MENSAJE: %s\n", mensaje);
-            /*Enviamos al proceso emisor un mensaje para indicar que estamos listos para recibir otro mensaje.*/        
-        close(tuberia [0]);//
         exit(0);
     } else {
         /*Codigo del proceso padre.*/
         /*El proceso padre (emisor) se carga de leer mensajes de la entrada estandar y, acto seguido,
         escribirlos en la tuberia para que los reciba el priceso hijo.El ciclo de lectura de la entrada
         estandar y escribir en la tuberia terminara cuando se introduzca el mensaje "FIN\n"*/
-        close(tuberia [0]);
+        // close(tuberia [0]);
         while ( printf ("PROCESO EMISOR. MENSAJE: ") !=0 &&
                 fgets(mensaje, sizeof(mensaje), stdin)!= NULL &&
                 write (tuberia [1], mensaje, strlen(mensaje)+1) > 0 &&  //u n o basura.sd.as.d.asdas.?0
-                strcmp(mensaje, "FIN\n") !=0);
+                strcmp(mensaje, "FIN\n") !=0){
+                  sleep(1);
+                }
         /*Nos ponemos a esperar el mensaje "LISTO" procedente del proceso receptor*/
-        close(tuberia [1]); //
+        close(tuberia [0]);
+        close(tuberia [1]);
         exit(0);
     }
 }
+
+
+// duda: diferencia entre acomodar las tuberias arriba o abajo
+// duda: como hacer que el padre imprima hasta que el hijo termine 
